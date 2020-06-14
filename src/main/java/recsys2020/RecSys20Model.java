@@ -79,7 +79,8 @@ public class RecSys20Model {
 
         //generate split
         this.split = new RecSys20Split(this.config, trainDate, validDate);
-        this.split.splitWithCache(this.data);
+//        this.split.splitWithCache(this.data);
+        this.split.splitByCreateDate(this.data);
 
         //init feat extractor
         this.featExtractor = new RecSys20FeatExtractor(
@@ -192,7 +193,7 @@ public class RecSys20Model {
         params.put("eta", 0.1);
         params.put("gamma", 0);
         if (highL2 == true) {
-            params.put("min_child_weight", 1);
+            params.put("min_child_weight", 5);
         } else {
             params.put("min_child_weight", 20);
         }
@@ -315,8 +316,8 @@ public class RecSys20Model {
         }
     }
 
-    public void submit(final EngageType targetAction,
-                       final String xgbModel) throws Exception {
+    public void submitLB(final EngageType targetAction,
+                         final String xgbModel) throws Exception {
         //submit xgb model for a specific action
         String[] indexToUser = new String[this.data.userToIndex.size()];
         for (Map.Entry<String, Integer> entry :
@@ -378,8 +379,7 @@ public class RecSys20Model {
     }
 
 
-    public void submit(final String[] xgbModels) throws Exception {
-        //submit xgb model for a specific action
+    public void submitLB(final String[] xgbModels) {
         String[] indexToUser = new String[this.data.userToIndex.size()];
         for (Map.Entry<String, Integer> entry :
                 this.data.userToIndex.entrySet()) {
@@ -399,18 +399,18 @@ public class RecSys20Model {
                 this.data.testEngageIndex).parallel().forEach(index -> {
             int count = counter.incrementAndGet();
             if (count % 1_000_000 == 0) {
-                timer.tocLoop("submit", count);
+                timer.tocLoop("submitLB", count);
             }
             features[index - this.data.lbEngageIndex] =
                     this.featExtractor.extractFeatures(index);
         });
-        timer.tocLoop("submit", counter.get());
+        timer.tocLoop("submitLB", counter.get());
 
         for (int i = 0; i < ACTIONS.length; i++) {
             Booster xgb = null;
             DMatrix xgbMat = null;
             try (BufferedWriter writer =
-                         new BufferedWriter(new FileWriter(xgbModels[ACTIONS[i].index] + "_submit"))) {
+                         new BufferedWriter(new FileWriter(xgbModels[ACTIONS[i].index] + "_submitLB"))) {
 
                 xgb = XGBoost.loadModel(xgbModels[ACTIONS[i].index]);
                 xgbMat = RecSys20Helper.toDMatrix(features,
@@ -418,7 +418,7 @@ public class RecSys20Model {
                         null,
                         -1);
                 float[][] xgbPreds = xgb.predict(xgbMat);
-                timer.toc("submit xgb inference done " + ACTIONS[i]);
+                timer.toc("submitLB xgb inference done " + ACTIONS[i]);
 
                 for (int j = 0; j < xgbPreds.length; j++) {
                     int[] engage =
@@ -439,18 +439,76 @@ public class RecSys20Model {
         }
     }
 
+    public void submitTest(final String[] xgbModels) {
+        String[] indexToUser = new String[this.data.userToIndex.size()];
+        for (Map.Entry<String, Integer> entry :
+                this.data.userToIndex.entrySet()) {
+            indexToUser[entry.getValue()] = entry.getKey();
+        }
+
+        String[] indexToTweet = new String[this.data.tweetToIndex.size()];
+        for (Map.Entry<String, Integer> entry :
+                this.data.tweetToIndex.entrySet()) {
+            indexToTweet[entry.getValue()] = entry.getKey();
+        }
+
+        List<MLSparseVector>[] features =
+                new List[this.data.testEngageIndexEnd - this.data.testEngageIndex];
+        AtomicInteger counter = new AtomicInteger(0);
+        IntStream.range(this.data.testEngageIndex,
+                this.data.testEngageIndexEnd).parallel().forEach(index -> {
+            int count = counter.incrementAndGet();
+            if (count % 1_000_000 == 0) {
+                timer.tocLoop("submitTest", count);
+            }
+            features[index - this.data.testEngageIndex] =
+                    this.featExtractor.extractFeatures(index);
+        });
+        timer.tocLoop("submitTest", counter.get());
+
+        for (int i = 0; i < ACTIONS.length; i++) {
+            Booster xgb = null;
+            DMatrix xgbMat = null;
+            try (BufferedWriter writer =
+                         new BufferedWriter(new FileWriter(xgbModels[ACTIONS[i].index] + "_submitTest"))) {
+
+                xgb = XGBoost.loadModel(xgbModels[ACTIONS[i].index]);
+                xgbMat = RecSys20Helper.toDMatrix(features,
+                        this.config.groupIndexesRemove[ACTIONS[i].index],
+                        null,
+                        -1);
+                float[][] xgbPreds = xgb.predict(xgbMat);
+                timer.toc("submitTest xgb inference done " + ACTIONS[i]);
+
+                for (int j = 0; j < xgbPreds.length; j++) {
+                    int[] engage =
+                            this.data.engage[this.data.testEngageIndex + j];
+                    writer.write(String.format("%s,%s,%.8f\n",
+                            indexToTweet[RecSys20Helper.getTweetIndex(engage)],
+                            indexToUser[RecSys20Helper.getUserIndex(engage)],
+                            xgbPreds[j][0]));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("xgb failed");
+            } finally {
+                xgb.dispose();
+                xgbMat.dispose();
+            }
+        }
+    }
+
     public static void main(final String[] args) {
         try {
-            String path;
+            String path = "/data/recsys2020/Data/";
             if (args.length > 1) {
                 path = args[1];
-            } else {
-                throw new Exception("Need 2+ arguments!");
             }
             String xgbPath = path + "Models/XGB/";
-            String predsPath = path + "Models/preds/";
             String modelPrefix = "200.model";
             String dataFile = path + "Data/parsed_transformed_1M.out";
+            String textFile = path + "Data/parsed_tweet_text.out";
 
 //            //to test features
 //            long[][] dates = RecSys20Helper.getTrainValidDates(
@@ -458,10 +516,16 @@ public class RecSys20Model {
 //                    1,
 //                    RecSys20Split.VALID_DATE_CUTOFF_4H);
 
-            //best chunk
+//            //best chunk
+//            long[][] dates = RecSys20Helper.getTrainValidDates(
+//                    8 * 60 * 60,
+//                    15,
+//                    RecSys20Split.VALID_DATE_CUTOFF_4H);
+
+            //saba split
             long[][] dates = RecSys20Helper.getTrainValidDates(
-                    8 * 60 * 60,
-                    15,
+                    24 * 60 * 60,
+                    5,
                     RecSys20Split.VALID_DATE_CUTOFF_4H);
 
 //            //blind training
@@ -472,23 +536,6 @@ public class RecSys20Model {
 
             RecSys20Config config = new RecSys20Config();
             config.path = path;
-            config.modelPredFiles = new String[ACTIONS.length][];
-            config.modelPredFiles[EngageType.REPLY.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelREPLY"
-            };
-            config.modelPredFiles[EngageType.RETWEET.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelRETWEET"
-            };
-            config.modelPredFiles[EngageType.COMMENT.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelCOMMENT"
-            };
-            config.modelPredFiles[EngageType.LIKE.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_200.modelLIKE"
-            };
 
             //TRAIN XGB model from java
             if (args[0].startsWith("trainXGB") == true) {
@@ -518,10 +565,9 @@ public class RecSys20Model {
                 RecSys20Data data = MLIOUtils.readObjectFromFile(
                         dataFile,
                         RecSys20Data.class);
-//                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
-//                        path + "Data/raw_tokens/parsedMention_all.out",
-//                        RecSys20TextData.class);
-                RecSys20TextData textData = null;
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
                 timer.toc("data loaded");
 
                 for (int i = 0; i < dates.length; i++) {
@@ -551,10 +597,9 @@ public class RecSys20Model {
                 RecSys20Data data = MLIOUtils.readObjectFromFile(
                         dataFile,
                         RecSys20Data.class);
-//                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
-//                        path + "Data/raw_tokens/parsedMention_all.out",
-//                        RecSys20TextData.class);
-                RecSys20TextData textData = null;
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
                 timer.toc("data loaded");
 
                 config.removeTrain = false;
@@ -583,14 +628,13 @@ public class RecSys20Model {
 
             //SUBMIT
             if (args[0].startsWith("submit") == true) {
-                timer.toc("starting SUBMIT");
+                timer.toc("starting SUBMIT LB");
                 RecSys20Data data = MLIOUtils.readObjectFromFile(
                         dataFile,
                         RecSys20Data.class);
-//                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
-//                        path + "Data/raw_tokens/parsedMention_all.out",
-//                        RecSys20TextData.class);
-                RecSys20TextData textData = null;
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
                 timer.toc("data loaded");
 
                 config.removeTrain = false;
@@ -606,7 +650,7 @@ public class RecSys20Model {
                         dates[0][0],
                         dates[0][1]);
                 if (split[1].equals("ALL") == true) {
-                    timer.toc("submitting for ALL actions");
+                    timer.toc("submitting LB for ALL actions");
 
                     String[] models = new String[ACTIONS.length];
                     models[EngageType.REPLY.index] =
@@ -617,20 +661,55 @@ public class RecSys20Model {
                             xgbPath + modelPrefix + EngageType.COMMENT;
                     models[EngageType.LIKE.index] =
                             xgbPath + modelPrefix + EngageType.LIKE;
-                    model.submit(models);
+                    model.submitLB(models);
 
                 } else {
                     EngageType targetAction = EngageType.fromString(split[1]);
                     timer.toc("submitting for " + targetAction);
-                    model.submit(targetAction,
+                    model.submitLB(targetAction,
                             xgbPath + modelPrefix + targetAction);
                 }
             }
+
+            //TEST
+            if (args[0].startsWith("test") == true) {
+                timer.toc("starting SUBMIT TEST");
+                RecSys20Data data = MLIOUtils.readObjectFromFile(
+                        dataFile,
+                        RecSys20Data.class);
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
+                timer.toc("data loaded");
+
+                config.removeTrain = false;
+                config.removeValid = false;
+                config.nChunks = dates.length;
+                config.chunkIndex = 0;
+
+                RecSys20Model model = new RecSys20Model(
+                        data,
+                        textData,
+                        config,
+                        dates[0][0],
+                        dates[0][1]);
+                timer.toc("submitting test for ALL actions");
+
+                String[] models = new String[ACTIONS.length];
+                models[EngageType.REPLY.index] =
+                        xgbPath + modelPrefix + EngageType.REPLY;
+                models[EngageType.RETWEET.index] =
+                        xgbPath + modelPrefix + EngageType.RETWEET;
+                models[EngageType.COMMENT.index] =
+                        xgbPath + modelPrefix + EngageType.COMMENT;
+                models[EngageType.LIKE.index] =
+                        xgbPath + modelPrefix + EngageType.LIKE;
+                model.submitTest(models);
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
-
-//watch -n1 tail log.txt
