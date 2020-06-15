@@ -6,7 +6,7 @@
 
 Our model is based on a deep learning pipeline with three major sources of input: 1) extracted features that describe engaging user, tweet creator and tweet content 2) language model embeddings for tweet content 3) engagement/creation history embeddings for user and tweet creator. These inputs are combined with feed forward neural networks to generate 4-way predictions for each engagement type.
 
-For language model component we use pretrained multilingual Transformer-based models [BERT-Base](https://huggingface.co/bert-base-multilingual-cased) and [XLM-Roberta-Large](https://huggingface.co/xlm-roberta-large).
+For the language model component, we use pretrained multilingual Transformer-based models [BERT-Base](https://huggingface.co/bert-base-multilingual-cased) and [XLM-Roberta-Large](https://huggingface.co/xlm-roberta-large).
 
 
 ## Execution
