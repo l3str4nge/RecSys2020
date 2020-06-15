@@ -6,7 +6,7 @@ import time
 from utils.argcheck import *
 from utils.eval import compute_prauc, compute_rce
 
-from model.EmbeddingNet import EmbeddingNet
+from model.EmbeddingNet import EmbeddingNet, EmbeddingHighWayNet
 import gc
 import torch
 import torch.nn as nn
@@ -39,9 +39,13 @@ def main(args):
     
     #build model
     progress.section("Build Model")
-    model = EmbeddingNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100],corruption=args.corruption)
+    if args.network_architecture == 'embedding_net':
+        model = EmbeddingNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100],corruption=args.corruption)
+    elif args.network_architecture == 'embedding_highway_net':
+        model = EmbeddingHighWayNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100])
+    else:
+        raise NotImplementedError('either use embedding_net or embedding_highway_net')
     model.cuda()
-    #model.load_state_dict(torch.load("./checkpoint/featurenet_v12_8.ckpt"))
     print(model)
     
     criterion = nn.BCEWithLogitsLoss()
@@ -144,6 +148,7 @@ if __name__ == "__main__":
     parser.add_argument('--emb_file', type=str, default='train_emb')
     parser.add_argument('--run_name', type=str, default='xlmr_final_new')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
+    parser.add_argument('--net-arch', dest='network_architecture', default='embedding_net')
     args = parser.parse_args()
 
     main(args)
