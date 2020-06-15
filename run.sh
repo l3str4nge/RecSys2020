@@ -5,10 +5,12 @@ PROJECT_PATH="/data/recsys2020/"
 DATA_PATH="${PROJECT_PATH}Data/"
 XGB_PATH="${PROJECT_PATH}Models/XGB/"
 DL_PATH="${PROJECT_PATH}Models/DL/"
+DL_H_PATH="${PROJECT_PATH}Models/DL_history/"
 
 mkdir "${PROJECT_PATH}Models"
 mkdir "${PROJECT_PATH}Models/XGB"
 mkdir "${PROJECT_PATH}Models/DL"
+mkdir "${PROJECT_PATH}Models/DL_history"
 mvn clean compile
 
 #this was tested on a box with 250GB of RAM
@@ -43,3 +45,9 @@ mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="train 
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="valid ${PROJECT_PATH}"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="submit ${PROJECT_PATH}"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="test ${PROJECT_PATH}"
+
+#extract libsvm feature file for DL (history) pipeline
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="train ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="valid ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="submit ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="test ${PROJECT_PATH}"

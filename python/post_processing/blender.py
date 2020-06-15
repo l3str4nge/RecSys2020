@@ -320,7 +320,7 @@ if __name__ == "__main__":
     parser.add_argument('--label_file', type=str, default="Valid.sav")
     parser.add_argument('--batch_size', type=int, default=16384)
     parser.add_argument('--lr', type=float, default=1e-2)
-    parser.add_argument('--epochs', type=int, default=1000)
+    parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--eval_percent', type=float, default=0.4)
     parser.add_argument('--run_name', type=str, default="blend")
     parser.add_argument('--checkpoint', type=str, default="./checkpoint/blend/epoch51.ckpt")
