@@ -17,7 +17,7 @@ We use a hybrid Java-Python pipeline where data parsing and feature extraction i
 ```
 This script requires path to the main `PROJECT_PATH` directory which must contain a subdirectory `PROJECT_PATH/Data/` with the `training.tsv`, `val.tsv` and `competition_test.tsv` challenge datasets. The script will parse the data, extract features, train baseline XGBoost model using features only and run inference on the leaderboard (`val.tsv`) and test (`competition_test.tsv`) sets. Trained XGBoost models and predictions are outputted to `PROJECT_PATH/Models/XGB/`.
 
+Then run each deep learning model as outlined in this README:
 
-## Github Repo
-https://github.com/layer6ai-labs/RecSys2020
+<https://github.com/layer6ai-labs/RecSys2020/blob/master/python/README.md>
 
