@@ -10,8 +10,8 @@ mkdir "${PROJECT_PATH}Models/XGB"
 
 mvn clean compile
 
-#need at least 30GB of RAM to run
-export MAVEN_OPTS="-Xmx250g -Xms250g"
+#this was tested on a box with 250GB of RAM
+export MAVEN_OPTS="-Xmx230g -Xms230g"
 
 #parse all data
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20DataParser" -Dexec.args="${DATA_PATH}"
@@ -23,14 +23,15 @@ python3 python/tweets/get_tweet_text.py "${DATA_PATH}"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Text" -Dexec.args="${DATA_PATH}"
 
 #extract libsvm feature file for each engagement
-export MAVEN_OPTS="-Xmx230g -Xms230g"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="trainLIBSVM:ALL ${PROJECT_PATH}"
 
 #train XGB models
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="trainXGB:ALL:true ${PROJECT_PATH}"
 
-#generate LB predictions, output will be in XGB_PATH
+#prediction uses more memory outside of the JVM
 export MAVEN_OPTS="-Xmx220g -Xms220g"
+
+#generate LB predictions, output will be in XGB_PATH
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="submit:ALL ${PROJECT_PATH}"
 
 #generate TEST predictions, output will be in XGB_PATH
