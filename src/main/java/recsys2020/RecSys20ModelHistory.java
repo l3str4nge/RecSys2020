@@ -499,7 +499,7 @@ public class RecSys20Model {
             if (args.length > 1) {
                 path = args[1];
             }
-            String xgbPath = path + "Models/DL/";
+            String xgbPath = path + "Models/DL_history/";
             String dataFile = path + "Data/parsed_transformed_1M.out";
             String textFile = path + "Data/parsed_tweet_text.out";
 
