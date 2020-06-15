@@ -171,7 +171,9 @@ public class RecSys20Text {
     public static void main(final String[] args) {
         try {
             String path = "/data/recsys2020/Data/";
-            String raw_token_path = path + "raw_tokens/";
+            if (args.length > 0) {
+                path = args[0];
+            }
 
             // Load data to get string tweetId to tweetIndex mapping
             RecSys20Data data = MLIOUtils.readObjectFromFile(
@@ -182,54 +184,13 @@ public class RecSys20Text {
             //parse data
             RecSys20Text parseText = new RecSys20Text(data);
             parseText.parse(new String[]{
-                    raw_token_path + "train_token.csv",
-                    raw_token_path + "val_token.csv"});
+                    path + "decoded_strings.csv"
+            });
             timer.toc("text parsed");
 
             MLIOUtils.writeObjectToFile(parseText.textData,
-                    raw_token_path + "parsedMention_all.out");
-
+                    path + "parsed_tweet_text.out");
             timer.toc("done");
-
-            boolean test_output = true;
-            if (test_output) {
-
-                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
-                        raw_token_path + "parsedMention_all.out",
-                        RecSys20TextData.class);
-
-                //"A64F73E8AC98048B86CBC09BE1781783,[CLS] happy chinese new
-                // year to the cutest boy ever [UNK] https : / / t. co /
-                // EEYRVsGvtb [SEP]\n"
-                String tokTest = "A64F73E8AC98048B86CBC09BE1781783";
-                Integer tokTestTweetIndex = data.tweetToIndex.get(tokTest);
-                float[] tokCounts =
-                        textData.tweetToTokCounts[tokTestTweetIndex];
-                for (float tok : tokCounts) {
-                    System.out.println(tok);
-                }
-
-
-                //05CEC3E45282B7CD5B95EE5A0E554C8F,"[CLS] @ RafaaNolascoo e
-                // isso que é paia, na moral [SEP]
-                String tTest = "05CEC3E45282B7CD5B95EE5A0E554C8F";
-                Integer tTestTweetIndex = data.tweetToIndex.get(tTest);
-                for (int i :
-                        textData.tweetToMentionIndex[tTestTweetIndex]) {
-                    System.out.println("mentionIndex :" + i);
-                }
-
-                //D1F22992B720504FF058991B83A4C4D8,[CLS] RT @ DeadbyBHVR _ JP
-                // : プレイヤー 満 足 度 アンケートを 実 施 します ！ 皆 さんがDead by Daylightについてどう
-                // 思 っているかお 聞 かせください 。.. 回 答 はこちら : https : / / t. co /
-                // ZasGMxQqhb. # DeadbyDaylight # DbD http [UNK] [SEP]
-                String rtTest = "D1F22992B720504FF058991B83A4C4D8";
-                Integer rtTestTweetIndex = data.tweetToIndex.get(tTest);
-                for (int i :
-                        textData.tweetToMentionIndex[rtTestTweetIndex]) {
-                    System.out.println("mentionIndex :" + i);
-                }
-            }
 
         } catch (Exception e) {
             e.printStackTrace();

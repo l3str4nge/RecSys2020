@@ -49,7 +49,7 @@ public class RecSys20Helper {
         return engage[8];
     }
 
-    public static int getUserCreatorFollow(final int[] engage) {
+    public static int getCreatorUserFollow(final int[] engage) {
         return engage[9];
     }
 

@@ -1,24 +1,37 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-RECSYS_PATH="/data/competitions/recsys2020/" # your recsys path
-HIGHL2="false" # high L2 run?
+#All challenge data should be in DATA_PATH
+PROJECT_PATH="/data/recsys2020/"
+DATA_PATH="${PROJECT_PATH}Data/"
+XGB_PATH="${PROJECT_PATH}Models/XGB/"
 
-mvn compile
+mkdir "${PROJECT_PATH}Models"
+mkdir "${PROJECT_PATH}Models/XGB"
 
-GITHASH_STR="$(git log --pretty=format:'%h' -n 1)"
-GITCMT_STR="$(git log -1)"
-DATE_STR="$(date +"%b_%d_%I:%M%p")"
-echo "Date: ${DATE_STR}"
-echo "Git: ${GITHASH_STR}"
-echo "${GITCMT_STR}"
+mvn clean compile
 
-TARGET_NAME="LIKE"
-echo "Running ${TARGET_NAME}"
+#need at least 30GB of RAM to run
+export MAVEN_OPTS="-Xmx250g -Xms250g"
+
+#parse all data
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20DataParser" -Dexec.args="${DATA_PATH}"
+
+#extract tweet text
+python get_tweet_text.py "${DATA_PATH}"
+
+#parse tweet text
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Text" -Dexec.args="${DATA_PATH}"
+
+#extract libsvm feature file for each engagement
 export MAVEN_OPTS="-Xmx230g -Xms230g"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="'trainLIBSVM:${TARGET_NAME}' '${RECSYS_PATH}'"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="'trainXGB:${TARGET_NAME}:${HIGHL2}' '${RECSYS_PATH}'"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="trainLIBSVM:ALL ${PROJECT_PATH}"
+
+#train XGB models
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="trainXGB:ALL:true ${PROJECT_PATH}"
+
+#generate LB predictions, output will be in XGB_PATH
 export MAVEN_OPTS="-Xmx220g -Xms220g"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="'submit:${TARGET_NAME}' '${RECSYS_PATH}'"
-echo "Date: ${DATE_STR}"
-echo "Git: ${GITHASH_STR}"
-echo "${GITCMT_STR}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="submit:ALL ${PROJECT_PATH}"
+
+#generate TEST predictions, output will be in XGB_PATH
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="test:ALL ${PROJECT_PATH}"

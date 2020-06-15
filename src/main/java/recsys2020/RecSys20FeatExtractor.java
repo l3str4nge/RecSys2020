@@ -55,12 +55,7 @@ public class RecSys20FeatExtractor {
     public int[][] engageCache;
     public int[][] createCache;
 
-    public int[][] engageLBCache;
-    public int[][] createLBCache;
-
     public RecSys20NeighborCF cf;
-//    public RecSys20Embedding embed;
-
 
     public RecSys20FeatExtractor(final RecSys20Data dataP,
                                  final RecSys20TextData textDataP,
@@ -75,9 +70,6 @@ public class RecSys20FeatExtractor {
 
         this.cf = new RecSys20NeighborCF(this.data, this.split, this.config);
         this.cf.initR(this.userToEngage);
-
-//        this.embed = new RecSys20Embedding(this);
-
     }
 
     public void initCache() throws Exception {
@@ -90,28 +82,7 @@ public class RecSys20FeatExtractor {
         this.engageCache = new int[this.data.userToIndex.size()][2];
         this.createCache = new int[this.data.userToIndex.size()][2];
 
-        this.engageLBCache = new int[this.data.userToIndex.size()][2];
-        this.createLBCache = new int[this.data.userToIndex.size()][2];
-
-        IntStream.range(0, this.data.testEngageIndex).parallel().forEach(index -> {
-            if (index >= this.data.lbEngageIndex) {
-                int[] engage = this.data.engage[index];
-                int creatorIndex = RecSys20Helper.getCreatorIndex(engage);
-                int userIndex = RecSys20Helper.getUserIndex(engage);
-
-                synchronized (this.engageLBCache[userIndex]) {
-                    this.engageLBCache[userIndex][0]++;
-                }
-                synchronized (this.createLBCache[creatorIndex]) {
-                    this.createLBCache[creatorIndex][0]++;
-                }
-                return;
-            }
-
-            int[] engage = this.data.engage[index];
-            int creatorIndex = RecSys20Helper.getCreatorIndex(engage);
-            int userIndex = RecSys20Helper.getUserIndex(engage);
-            long[] engageAction = this.data.engageAction[index];
+        IntStream.range(0, this.data.lbEngageIndex).parallel().forEach(index -> {
 
             if (this.config.removeTrain == true && this.split.isTrain(index) == true) {
                 return;
@@ -119,6 +90,11 @@ public class RecSys20FeatExtractor {
             if (this.config.removeValid == true && this.split.isValid(index) == true) {
                 return;
             }
+
+            int[] engage = this.data.engage[index];
+            int creatorIndex = RecSys20Helper.getCreatorIndex(engage);
+            int userIndex = RecSys20Helper.getUserIndex(engage);
+            long[] engageAction = this.data.engageAction[index];
 
             synchronized (this.engageCache[userIndex]) {
                 this.engageCache[userIndex][0]++;
@@ -333,7 +309,7 @@ public class RecSys20FeatExtractor {
         List<MLSparseVector> feats = new LinkedList();
 
         feats.add(new MLDenseVector(new float[]{
-                RecSys20Helper.getUserCreatorFollow(record.targetEngage)
+                RecSys20Helper.getCreatorUserFollow(record.targetEngage),
         }).toSparse());
 
         Set<Integer>[] targetUserEngage =
@@ -395,7 +371,7 @@ public class RecSys20FeatExtractor {
                 if (RecSys20Helper.getCreatorVerified(engage) > 0) {
                     engageContent[5]++;
                 }
-                if (RecSys20Helper.getUserCreatorFollow(engage) > 0) {
+                if (RecSys20Helper.getCreatorUserFollow(engage) > 0) {
                     engageContent[6]++;
                 }
 
@@ -538,20 +514,6 @@ public class RecSys20FeatExtractor {
         return feats;
     }
 
-    public List<MLSparseVector> getLBDataFeatures(final TargetRecord record) {
-        List<MLSparseVector> feats = new LinkedList();
-
-        feats.add(new MLDenseVector(new float[]{
-                this.engageLBCache[record.targetUserIndex][0],
-                this.createLBCache[record.targetUserIndex][0],
-
-                this.engageLBCache[record.targetCreatorIndex][0],
-                this.createLBCache[record.targetCreatorIndex][0]
-        }).toSparse());
-
-        return feats;
-    }
-
     public List<MLSparseVector> getRawTextCountFeatures(final TargetRecord record) {
         List<MLSparseVector> feats = new LinkedList();
 
@@ -686,26 +648,9 @@ public class RecSys20FeatExtractor {
         //collaborative filtering features
         feats.add(this.cf.getItemItem(record));
 
-//        //LB data features
-//        feats.addAll(this.getLBDataFeatures(record));
-//
-//        //raw text features
-//        feats.addAll(this.getRawTextCountFeatures(record));
+        //raw text features
+        feats.addAll(this.getRawTextCountFeatures(record));
 
         return feats;
     }
-
 }
-
-//1M col selection
-//RecSys20DataParser: present_media 2 elapsed [11 min 49 sec]
-//RecSys20DataParser: present_links 0 elapsed [11 min 54 sec]
-//RecSys20DataParser: language 11 elapsed [12 min 12 sec]
-//RecSys20DataParser: present_domains 0 elapsed [12 min 17 sec]
-//RecSys20DataParser: hashtags 0 elapsed [12 min 28 sec]
-//RecSys20DataParser: tweet_type 3 elapsed [12 min 39 sec]
-//RecSys20DataParser: text_tokens 297 elapsed [23 min 25 sec]
-
-//-user engagement counts by day of week
-//-counts in last 12h, 24h etc.
-//-counts by following vs not following
