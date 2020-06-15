@@ -14,7 +14,7 @@ Please refer to the detailed README inside each folder for information on how to
 ## Reproducing the Final Submission (Inference)
 
 1. run [./mlp_model/run.sh](https://github.com/layer6ai-labs/RecSys2020/blob/master/python/mlp_model/run.sh)
-2. run [blendingfile](blah)
+2. run [blendingfile](blah) <-- TODO, UPDATE THIS
 
 
 ### Model 1
