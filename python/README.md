@@ -21,9 +21,9 @@ Please refer to the detailed README inside each folder for information on how to
 
 One model is submitted with temperature tuning
 
-1. temperature scaling file blah
+1. run "[temperature_scaling.py](https://github.com/layer6ai-labs/RecSys2020/blob/master/python/post_processing/temperature_scaling.py) --submit_folder /path/to/4csvs/test"
 
 
 ### Model 2
 
-The other model is submitted without temperature tuning.
+The other model is submitted without temperature tuning. The 4 csv files outputted by the blender are directly used.
