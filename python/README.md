@@ -21,7 +21,7 @@ Please refer to the detailed README inside each folder for information on how to
 
 One model is submitted with temperature tuning
 
-
+1. temperature scaling file blah
 
 
 ### Model 2
