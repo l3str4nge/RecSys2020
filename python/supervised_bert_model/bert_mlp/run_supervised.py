@@ -579,7 +579,7 @@ def main():
     )
     parser.add_argument(
         "--model_name_or_path",
-        default=None,
+        default="checkpoint-288000",
         type=str,
         help="The model checkpoint for weights initialization. Leave None if you want to train a model from scratch.",
     )
