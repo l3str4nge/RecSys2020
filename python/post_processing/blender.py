@@ -104,6 +104,7 @@ def load_labels(args, row_lookup):
     else:
 
         val_dict = joblib.load(open(args.label_file, "rb"))
+        val_dict['tweet_ids']= np.squeeze(val_dict['tweet_ids'])
 
         labels = np.zeros([len(row_lookup), 4], dtype=np.float32)
         assigned_rows = set()
@@ -317,7 +318,7 @@ if __name__ == "__main__":
     parser.add_argument('--submit_folder', type=str, default="../out/submit")
     parser.add_argument('--validation_folder', type=str, default="../out/val")
     parser.add_argument('--csv_subfolders', type=str, default="bert_e30,history340k,supervised21k,xlmr_final_new_epoch50,xlmr_scheduler_epoch27,featurenet,history470k,XGB3000,xlmr_highway_epoch52")
-    parser.add_argument('--label_file', type=str, default="Valid.sav")
+    parser.add_argument('--label_file', type=str, default="../mlp_model/data/Valid.sav")
     parser.add_argument('--batch_size', type=int, default=16384)
     parser.add_argument('--lr', type=float, default=1e-2)
     parser.add_argument('--epochs', type=int, default=100)
