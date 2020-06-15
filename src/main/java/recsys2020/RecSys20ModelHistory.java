@@ -7,10 +7,8 @@ import common.core.utils.MLTimer;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -128,6 +126,19 @@ public class RecSys20Model {
         AtomicInteger featLength = new AtomicInteger(-1);
         AtomicInteger counter = new AtomicInteger(0);
 
+        try (BufferedWriter mapWriter = new BufferedWriter(new FileWriter(outPath +
+                "TweetIDMap.csv"))
+        ) {
+            for(Map.Entry<String, Integer> entry : this.data.tweetToIndex.entrySet()) {
+                StringBuilder mapbuilder = new StringBuilder();
+                mapbuilder.append(entry.getKey());
+                mapbuilder.append(',');
+                mapbuilder.append(entry.getValue());
+                mapbuilder.append("\n");
+                mapWriter.write(mapbuilder.toString());
+            }
+        }
+
         try (BufferedWriter trainWriter =
                      new BufferedWriter(new FileWriter(outPath +
                              "TrainXGB.csv", this.config.appendToFile));
@@ -181,28 +192,30 @@ public class RecSys20Model {
                     targetAll.append(target);
                     targetAll.append(",");
                 }
-                /*
+
                 Set<Integer>[] targetUserEngage = this.featExtractor.userToEngage[uId];
                 StringBuilder tweetHistory = new StringBuilder();
 
                 for (int i = 0; i < ACTIONS.length; i++) {
-                    String tidHis;
+                    Set<Integer> userEngaged = new TreeSet<>();
+                    Integer tidHis;
                     if (targetUserEngage[i] != null) {
                         for (int engageId : targetUserEngage[i]) {
-                            tidHis = indexToTweet[RecSys20Helper.getTweetIndex(this.data.engage[engageId])];
+                            tidHis = RecSys20Helper.getTweetIndex(this.data.engage[engageId]);
                             tweetHistory.append(tidHis);
                             tweetHistory.append("|");
+                            userEngaged.add(tidHis);
+                            if (userEngaged.size() >= 10) {
+                                break;
+                            }
                         }
                     }
                     tweetHistory.append(",");
                 }
-                */
-
-                //String csv =
-                //        targetAll + featCSV + tweet + ',' + tweetHistory + uId + ',' + cId + "\n";
 
                 String csv =
-                        targetAll + featCSV + tweet + ',' + uId + ',' + cId + "\n";
+                        targetAll + featCSV + tweet + ',' + tweetHistory + uId + ',' + cId + "\n";
+
 
                 if (isValid == true) {
                     try {
@@ -239,6 +252,21 @@ public class RecSys20Model {
 
         AtomicInteger counter = new AtomicInteger(0);
 
+        try (BufferedWriter mapWriter = new BufferedWriter(new FileWriter(outPath +
+                "TweetIDMap.csv"))
+        ) {
+            for(Map.Entry<String, Integer> entry : this.data.tweetToIndex.entrySet()) {
+                StringBuilder mapbuilder = new StringBuilder();
+                mapbuilder.append(entry.getKey());
+                mapbuilder.append(',');
+                mapbuilder.append(entry.getValue());
+                mapbuilder.append("\n");
+                mapWriter.write(mapbuilder.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try (BufferedWriter submitWriter =
                      new BufferedWriter(new FileWriter(outPath +
                              "ValidXGB.csv", this.config.appendToFile))){
@@ -269,8 +297,30 @@ public class RecSys20Model {
 
                 String user = indexToUser[uId];
                 String creator = indexToUser[cId];
+
+                Set<Integer>[] targetUserEngage = this.featExtractor.userToEngage[uId];
+                StringBuilder tweetHistory = new StringBuilder();
+
+                for (int i = 0; i < ACTIONS.length; i++) {
+                    Set<Integer> userEngaged = new TreeSet<>();
+                    Integer tidHis;
+                    if (targetUserEngage[i] != null) {
+                        for (int engageId : targetUserEngage[i]) {
+                            tidHis = RecSys20Helper.getTweetIndex(this.data.engage[engageId]);
+                            tweetHistory.append(tidHis);
+                            tweetHistory.append("|");
+                            userEngaged.add(tidHis);
+                            if (userEngaged.size() >= 10) {
+                                break;
+                            }
+                        }
+                    }
+                    tweetHistory.append(",");
+                }
+
                 String csv =
-                        targetAll + featCSV + tweet + ',' + uId + ',' + cId + ',' + user + "\n";
+                        targetAll + featCSV + tweet + ',' + tweetHistory + uId + ',' + cId + ',' + user + "\n";
+
                 try {
                     submitWriter.write(csv);
                 } catch (Exception e) {
@@ -297,6 +347,21 @@ public class RecSys20Model {
 
         AtomicInteger counter = new AtomicInteger(0);
 
+        try (BufferedWriter mapWriter = new BufferedWriter(new FileWriter(outPath +
+                "TweetIDMap.csv"))
+        ) {
+            for(Map.Entry<String, Integer> entry : this.data.tweetToIndex.entrySet()) {
+                StringBuilder mapbuilder = new StringBuilder();
+                mapbuilder.append(entry.getKey());
+                mapbuilder.append(',');
+                mapbuilder.append(entry.getValue());
+                mapbuilder.append("\n");
+                mapWriter.write(mapbuilder.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try (BufferedWriter submitWriter =
                      new BufferedWriter(new FileWriter(outPath +
                              "Submit.csv", this.config.appendToFile))){
@@ -315,8 +380,30 @@ public class RecSys20Model {
 
                 String user = indexToUser[uId];
                 String creator = indexToUser[cId];
+
+                Set<Integer>[] targetUserEngage = this.featExtractor.userToEngage[uId];
+                StringBuilder tweetHistory = new StringBuilder();
+
+                for (int i = 0; i < ACTIONS.length; i++) {
+                    Set<Integer> userEngaged = new TreeSet<>();
+                    Integer tidHis;
+                    if (targetUserEngage[i] != null) {
+                        for (int engageId : targetUserEngage[i]) {
+                            tidHis = RecSys20Helper.getTweetIndex(this.data.engage[engageId]);
+                            tweetHistory.append(tidHis);
+                            tweetHistory.append("|");
+                            userEngaged.add(tidHis);
+                            if (userEngaged.size() >= 10) {
+                                break;
+                            }
+                        }
+                    }
+                    tweetHistory.append(",");
+                }
+
                 String csv =
-                        featCSV + tweet + ',' + uId + ',' + cId + ',' + user + "\n";
+                        featCSV + tweet + ',' + tweetHistory + uId + ',' + cId + ',' + user + "\n";
+
                 try {
                     submitWriter.write(csv);
                 } catch (Exception e) {
@@ -341,6 +428,21 @@ public class RecSys20Model {
 
         AtomicInteger counter = new AtomicInteger(0);
 
+        try (BufferedWriter mapWriter = new BufferedWriter(new FileWriter(outPath +
+                "TweetIDMap.csv"))
+        ) {
+            for(Map.Entry<String, Integer> entry : this.data.tweetToIndex.entrySet()) {
+                StringBuilder mapbuilder = new StringBuilder();
+                mapbuilder.append(entry.getKey());
+                mapbuilder.append(',');
+                mapbuilder.append(entry.getValue());
+                mapbuilder.append("\n");
+                mapWriter.write(mapbuilder.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try (BufferedWriter submitWriter =
                      new BufferedWriter(new FileWriter(outPath +
                              "Test.csv", this.config.appendToFile))){
@@ -359,8 +461,29 @@ public class RecSys20Model {
 
                 String user = indexToUser[uId];
                 String creator = indexToUser[cId];
+
+                Set<Integer>[] targetUserEngage = this.featExtractor.userToEngage[uId];
+                StringBuilder tweetHistory = new StringBuilder();
+
+                for (int i = 0; i < ACTIONS.length; i++) {
+                    Set<Integer> userEngaged = new TreeSet<>();
+                    Integer tidHis;
+                    if (targetUserEngage[i] != null) {
+                        for (int engageId : targetUserEngage[i]) {
+                            tidHis = RecSys20Helper.getTweetIndex(this.data.engage[engageId]);
+                            tweetHistory.append(tidHis);
+                            tweetHistory.append("|");
+                            userEngaged.add(tidHis);
+                            if (userEngaged.size() >= 10) {
+                                break;
+                            }
+                        }
+                    }
+                    tweetHistory.append(",");
+                }
+
                 String csv =
-                        featCSV + tweet + ',' + uId + ',' + cId + ',' + user + "\n";
+                        featCSV + tweet + ',' + tweetHistory + uId + ',' + cId + ',' + user + "\n";
                 try {
                     submitWriter.write(csv);
                 } catch (Exception e) {
