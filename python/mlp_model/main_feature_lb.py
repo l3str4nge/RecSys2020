@@ -33,7 +33,7 @@ def main(args):
     print(model)
 
     model.cuda()
-    model.load_state_dict(torch.load("./checkpoint/featurenet_40.ckpt"))
+    model.load_state_dict(torch.load(args.checkpoint))
 
     print(model)
     lb_loader = data.instance_a_lb_loader(args.batch)
