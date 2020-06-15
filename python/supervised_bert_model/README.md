@@ -10,6 +10,6 @@
 
 *process_embeddings/*
 
-4 - Train another MLP on top of these embeddings (and the other features):
+4 - Train or infer another MLP on top of these embeddings (and the other features):
 
 *mlp_on_embeddings/*
