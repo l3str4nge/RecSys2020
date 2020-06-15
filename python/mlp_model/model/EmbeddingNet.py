@@ -52,7 +52,7 @@ class EmbeddingNet(nn.Module):
 
 
 class EmbeddingHighWayNet(nn.Module):
-    def __init__(self, num_tokens, num_features, emb_size, layers,corruption=0.2):
+    def __init__(self, num_tokens, num_features, emb_size, layers, corruption=0.2):
         super(EmbeddingHighWayNet, self).__init__()
 
         layers = [layers] if type(layers) is int else layers
