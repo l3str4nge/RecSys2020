@@ -5,10 +5,12 @@ PROJECT_PATH="/data/recsys2020/"
 DATA_PATH="${PROJECT_PATH}Data/"
 XGB_PATH="${PROJECT_PATH}Models/XGB/"
 DL_PATH="${PROJECT_PATH}Models/DL/"
+DL_H_PATH="${PROJECT_PATH}Models/DL_history/"
 
 mkdir "${PROJECT_PATH}Models"
 mkdir "${PROJECT_PATH}Models/XGB"
 mkdir "${PROJECT_PATH}Models/DL"
+mkdir "${PROJECT_PATH}Models/DL_history"
 mvn clean compile
 
 #this was tested on a box with 250GB of RAM
