@@ -10,11 +10,10 @@ from tqdm import tqdm, trange
 
 from model.EmbeddingNet import EmbeddingNet  # , MLP_combine
 
-from utils.argcheck import *
-from utils.eval import compute_prauc, compute_rce
-from utils.progress import WorkSplitter, inhour
-from utils.data_feature_embedding_multiple import Data
-
+from utils_functions.argcheck import *
+from utils_functions.eval import compute_prauc, compute_rce
+from utils_functions.progress import WorkSplitter, inhour
+from utils_functions.data_feature_embedding_multiple import Data
 
 
 

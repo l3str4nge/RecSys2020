@@ -5,10 +5,12 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
-from utils.io import get_csr_matrix
 import joblib
 from tqdm import tqdm
 from time import time
+
+from utils_functions.io import get_csr_matrix
+
 
 
 class TwitterDataset(Dataset):
