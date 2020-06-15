@@ -148,7 +148,7 @@ if __name__ == "__main__":
     parser.add_argument('--emb_file', type=str, default='train_emb')
     parser.add_argument('--run_name', type=str, default='xlmr_final_new')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
-    parser.add_argument('--net-arch', dest='network_architecture', default='embedding_net')
+    parser.add_argument('--net_arch', dest='network_architecture', default='embedding_net')
     args = parser.parse_args()
 
     main(args)
