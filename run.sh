@@ -43,3 +43,9 @@ mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="train 
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="valid ${PROJECT_PATH}"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="submit ${PROJECT_PATH}"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="test ${PROJECT_PATH}"
+
+#extract libsvm feature file for DL (history) pipeline
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="train ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="valid ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="submit ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="test ${PROJECT_PATH}"
