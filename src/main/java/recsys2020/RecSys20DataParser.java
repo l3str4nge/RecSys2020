@@ -333,11 +333,9 @@ public class RecSys20DataParser {
 
     public static void main(final String[] args) {
         try {
-            String path;
-            if (args.length == 1) {
-                path = args[0]; // path to Data
-            } else {
-                throw new Exception("Needs recsys data path!");
+            String path = "/data/recsys2020/Data/";
+            if (args.length > 0) {
+                path = args[0];
             }
 
             //parse data
@@ -373,20 +371,8 @@ public class RecSys20DataParser {
 //            RecSys20DataParser parser = new RecSys20DataParser();
 //            parser.applyTransforms(path);
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
-
-//500K
-//RecSys20DataParser: present_media 3 elapsed [12 min 16 sec]
-//RecSys20DataParser: present_links 0 elapsed [12 min 20 sec]
-//RecSys20DataParser: language 12 elapsed [12 min 31 sec]
-//RecSys20DataParser: present_domains 1 elapsed [12 min 36 sec]
-//RecSys20DataParser: hashtags 0 elapsed [12 min 47 sec]
-//RecSys20DataParser: tweet_type 3 elapsed [12 min 58 sec]
-//RecSys20DataParser: text_tokens 603 elapsed [23 min 33 sec]
-

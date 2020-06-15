@@ -44,15 +44,17 @@ public class RecSys20Blender {
     public float[][][] modelPreds;
 
     public RecSys20Blender(final RecSys20Data dataP,
+                           final RecSys20TextData textDataP,
                            final RecSys20Config configP,
                            final long trainDate,
                            final long validDate) throws Exception {
         this.data = dataP;
+        this.textData = textDataP;
         this.config = configP;
 
         //generate split
         this.split = new RecSys20Split(this.config, trainDate, validDate);
-        this.split.split(this.data);
+        this.split.splitByCreateDateBlend(this.data);
 
         //init feat extractor
         this.featExtractor = new RecSys20FeatExtractor(
@@ -154,30 +156,25 @@ public class RecSys20Blender {
             }
 
             int curCount = counter.incrementAndGet();
-            if (curCount % 2_000_000 == 0) {
+            if (curCount % 1_000_000 == 0) {
                 timer.tocLoop("train", curCount);
             }
 
             //features
-//            List<MLSparseVector> features =
+//            List<MLSparseVector> featureList =
 //                    this.featExtractor.extractFeatures(engageIndex);
-            List<MLSparseVector> features = new LinkedList<>();
+            List<MLSparseVector> featureList = new LinkedList<>();
+
             int[] engage = this.data.engage[engageIndex];
             int tweetIndex = RecSys20Helper.getTweetIndex(engage);
             int userIndex = RecSys20Helper.getUserIndex(engage);
             int predsIndex = this.userTweetToIndex.get(
                     getId(tweetIndex, userIndex));
 
-            float[] totals = new float[this.modelPreds.length + 1];
             for (int i = 0; i < this.modelPreds.length; i++) {
-                features.add(new MLDenseVector(this.modelPreds[i][predsIndex]).toSparse());
-                for (float score : this.modelPreds[i][predsIndex]) {
-                    totals[i] += score;
-                    totals[this.modelPreds.length] += score;
-                }
+                featureList.add(new MLDenseVector(this.modelPreds[i][predsIndex]).toSparse());
             }
-            features.add(new MLDenseVector(totals).toSparse());
-            String libSVM = RecSys20Helper.toLIBSVM(features, null);
+            String libSVM = RecSys20Helper.toLIBSVM(featureList, null);
 
             long[] engageAction = this.data.engageAction[engageIndex];
             for (EngageType action : ACTIONS) {
@@ -228,8 +225,8 @@ public class RecSys20Blender {
         params.put("verbosity", 2);
         params.put("eta", 0.1);
         params.put("gamma", 0);
-        params.put("min_child_weight", 1);
-        params.put("max_depth", 7);
+        params.put("min_child_weight", 5);
+        params.put("max_depth", 5);
         params.put("subsample", 1);
         params.put("colsample_bytree", 0.8);
         params.put("alpha", 0);
@@ -278,7 +275,7 @@ public class RecSys20Blender {
 
     public void submitAVG(final String[] xgbModels,
                           final String lbFile) throws Exception {
-        this.loadModelPreds("_submit");
+        this.loadModelPreds("_submitLB");
 
         //load LB data
         RecSys20DataParser parser = new RecSys20DataParser(this.data);
@@ -333,7 +330,7 @@ public class RecSys20Blender {
 
     public void submit(final String[] xgbModels,
                        final String lbFile) throws Exception {
-        this.loadModelPreds("_submit");
+        this.loadModelPreds("_submitLB");
 
         //load LB data
         RecSys20DataParser parser = new RecSys20DataParser(this.data);
@@ -420,35 +417,32 @@ public class RecSys20Blender {
                 path = args[1];
             }
             String xgbPath = path + "Models/XGB/";
-            String predsPath = path + "Models/preds/";
+            String predsPath = xgbPath + "preds/";
+            String textFile = path + "Data/parsed_tweet_text.out";
+
             String modelPrefix = "50.modelBlend";
 
             RecSys20Config config = new RecSys20Config();
             config.path = path;
             config.modelPredFiles = new String[ACTIONS.length][];
             config.modelPredFiles[EngageType.REPLY.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_200.modelREPLY",
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelREPLY"
+                    predsPath + "200.modelREPLY",
+                    predsPath + "3000.modelREPLY"
             };
             config.modelPredFiles[EngageType.RETWEET.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_200.modelRETWEET",
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelRETWEET"
+                    predsPath + "200.modelRETWEET",
+                    predsPath + "3000.modelRETWEET"
             };
             config.modelPredFiles[EngageType.COMMENT.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_200.modelCOMMENT",
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_3000.modelCOMMENT"
+                    predsPath + "200.modelCOMMENT",
+                    predsPath + "3000.modelCOMMENT"
             };
             config.modelPredFiles[EngageType.LIKE.index] = new String[]{
-                    predsPath + "57b3403057b0abc1827d52452243280652c93f63" +
-                            "_200.modelLIKE"
+                    predsPath + "200.modelLIKE",
+                    predsPath + "3000.modelLIKE"
             };
 
+            //saba split
             long[][] dates = new long[1][];
             dates[0] = new long[]{
                     RecSys20Split.VALID_DATE_CUTOFF_4H,
@@ -467,29 +461,29 @@ public class RecSys20Blender {
                 }
             }
 
-            //get blend libsvm with multiple date intervals
+            //get blend libsvm
             if (args[0].startsWith("trainLIBSVM") == true) {
                 timer.toc("starting blend LIBSVM TRAIN");
-                String[] split = args[0].split(":");
                 RecSys20Data data = MLIOUtils.readObjectFromFile(
                         path + "Data/parsed_transformed_1M.out",
                         RecSys20Data.class);
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
                 timer.toc("data loaded");
 
-                for (int i = 0; i < dates.length; i++) {
-                    if (i == 0) {
-                        config.skipValid = false;
-                        config.appendToFile = false;
-                    } else {
-                        config.skipValid = true;
-                        config.appendToFile = true;
-                    }
-                    config.chunkIndex = i + 1;
+                config.removeTrain = false;
+                config.removeValid = true;
+                config.nChunks = dates.length;
+                config.chunkIndex = 0;
 
-                    RecSys20Blender blender = new RecSys20Blender(data, config,
-                            dates[i][0], dates[i][1]);
-                    blender.train(xgbPath);
-                }
+                RecSys20Blender blender = new RecSys20Blender(
+                        data,
+                        textData,
+                        config,
+                        dates[0][0],
+                        dates[0][1]);
+                blender.train(xgbPath);
             }
 
             //SUBMIT
@@ -498,10 +492,22 @@ public class RecSys20Blender {
                 RecSys20Data data = MLIOUtils.readObjectFromFile(
                         path + "Data/parsed_transformed_1M.out",
                         RecSys20Data.class);
+                RecSys20TextData textData = MLIOUtils.readObjectFromFile(
+                        textFile,
+                        RecSys20TextData.class);
                 timer.toc("data loaded");
 
-                RecSys20Blender blender = new RecSys20Blender(data, config,
-                        dates[0][0], dates[0][1]);
+                config.removeTrain = false;
+                config.removeValid = false;
+                config.nChunks = dates.length;
+                config.chunkIndex = 0;
+
+                RecSys20Blender blender = new RecSys20Blender(
+                        data,
+                        textData,
+                        config,
+                        dates[0][0],
+                        dates[0][1]);
                 timer.toc("submitting blend for ALL actions");
 
                 String[] models = new String[ACTIONS.length];
