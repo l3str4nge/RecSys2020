@@ -4,10 +4,11 @@
 PROJECT_PATH="/data/recsys2020/"
 DATA_PATH="${PROJECT_PATH}Data/"
 XGB_PATH="${PROJECT_PATH}Models/XGB/"
+DL_PATH="${PROJECT_PATH}Models/DL/"
 
 mkdir "${PROJECT_PATH}Models"
 mkdir "${PROJECT_PATH}Models/XGB"
-
+mkdir "${PROJECT_PATH}Models/DL"
 mvn clean compile
 
 #this was tested on a box with 250GB of RAM
@@ -36,3 +37,9 @@ mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="submit:AL
 
 #generate TEST predictions, output will be in XGB_PATH
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Model" -Dexec.args="test:ALL ${PROJECT_PATH}"
+
+#extract libsvm feature file for DL pipeline
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="train ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="valid ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="submit ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="test ${PROJECT_PATH}"
