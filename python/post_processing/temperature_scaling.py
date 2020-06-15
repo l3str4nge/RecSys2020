@@ -192,8 +192,8 @@ if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="P")
 
-    parser.add_argument('--submit_folder', type=str, default="./blend_9ver_100epoch/test")
-    parser.add_argument('--validation_folder', type=str, default='./blend_9ver_100epoch/val')
+    parser.add_argument('--submit_folder', type=str, default="../out/test")
+    parser.add_argument('--validation_folder', type=str, default='../out/val')
     parser.add_argument('--label_file', type=str, default='Valid.sav')
     parser.add_argument('--run_name', type=str, default="test")
 
