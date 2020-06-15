@@ -17,7 +17,7 @@ export MAVEN_OPTS="-Xmx250g -Xms250g"
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20DataParser" -Dexec.args="${DATA_PATH}"
 
 #extract tweet text
-python get_tweet_text.py "${DATA_PATH}"
+python3 src/main/python/tweets/get_tweet_text.py "${DATA_PATH}"
 
 #parse tweet text
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20Text" -Dexec.args="${DATA_PATH}"
