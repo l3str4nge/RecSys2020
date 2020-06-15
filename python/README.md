@@ -13,8 +13,8 @@ Please refer to the detailed README inside each folder for information on how to
 
 ## Reproducing the Final Submission (Inference)
 
-1. run [./mlp_model/run.sh](https://github.com/layer6ai-labs/RecSys2020/blob/master/python/mlp_model/run.sh)
-2. run [blendingfile](blah) <-- TODO, UPDATE THIS
+1. run each models as described in separate `readme`
+2. run `blender.py` and `temperature_scaling.py`(optional) under post_processing
 
 
 ### Model 1
