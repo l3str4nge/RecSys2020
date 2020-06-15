@@ -1,12 +1,6 @@
 import numpy as np
-from utils.progress import WorkSplitter, inhour
-from utils.data_feature_embedding_multiple import Data
 import argparse
 import time
-from utils.argcheck import *
-from utils.eval import compute_prauc, compute_rce
-
-from model.EmbeddingNet import EmbeddingNet
 import gc
 import torch
 import torch.nn as nn
@@ -14,6 +8,14 @@ import os
 
 from tqdm import tqdm, trange
 from torch.utils.tensorboard import SummaryWriter
+
+from utils.argcheck import *
+from utils.eval import compute_prauc, compute_rce
+from utils.progress import WorkSplitter, inhour
+from utils.data_feature_embedding_multiple import Data
+
+from model.EmbeddingNet import EmbeddingNet
+
 
 
 def main(args):

@@ -1,19 +1,21 @@
 import numpy as np
-from utils.progress import WorkSplitter, inhour
-from utils.data_feature_embedding_multiple import Data
 import argparse
 import time
-from utils.argcheck import *
-from utils.eval import compute_prauc, compute_rce
-
-from model.EmbeddingNet import EmbeddingNet  # , MLP_combine
-
 import torch
 import torch.nn as nn
 import os
 import pandas as pd
 
 from tqdm import tqdm, trange
+
+from model.EmbeddingNet import EmbeddingNet  # , MLP_combine
+
+from utils.argcheck import *
+from utils.eval import compute_prauc, compute_rce
+from utils.progress import WorkSplitter, inhour
+from utils.data_feature_embedding_multiple import Data
+
+
 
 
 def main(args):
