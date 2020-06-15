@@ -6,7 +6,7 @@ import time
 from utils.argcheck import *
 from utils.eval import compute_prauc, compute_rce
 
-from model.EmbeddingNet import EmbeddingHighWayNet #, MLP_combine
+from model.EmbeddingNet import EmbeddingNet, EmbeddingHighWayNet
 
 import torch
 import torch.nn as nn
@@ -34,11 +34,15 @@ def main(args):
     #build model
     progress.section("Build Model")
 
-    model = EmbeddingHighWayNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100])
+    if args.network_architecture == 'embedding_net':
+        model = EmbeddingNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100],corruption=args.corruption)
+    elif args.network_architecture == 'embedding_highway_net':
+        model = EmbeddingHighWayNet(data.n_token, data.n_feature, emb_size, [1024, 2000, 1000, 500, 100])
+    else:
+        raise NotImplementedError('either use embedding_net or embedding_highway_net')
     model.cuda()
     print(model)
 
-    model.cuda()
     model.load_state_dict(torch.load(args.checkpoint))
 
     print(model)
@@ -93,7 +97,7 @@ if __name__ == "__main__":
     parser.add_argument('--emb_file', type=str, default='train_emb')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
     parser.add_argument('--checkpoint', type=str, default="./checkpoint/xlmr_highway_scheduler_13.ckpt")
-
+    parser.add_argument('--net-arch', dest='network_architecture', default='embedding_net')
     args = parser.parse_args()
 
     main(args)

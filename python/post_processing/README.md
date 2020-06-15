@@ -1,0 +1,1 @@
+temperature_scaling.py takes as input 4 csv files that are the predictions of the model in (tweet id, user id, probaiblity) tab separated format and scales each task's logits by some temperature. The output is the scaled probabilities in (tweet id, user id, probability) form.
