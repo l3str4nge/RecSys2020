@@ -88,7 +88,6 @@ if __name__ == "__main__":
     parser.add_argument('-tr', dest='train', default='Train')
     parser.add_argument('-v', dest='valid', default='Submit.sav')
     parser.add_argument('-sp', dest='spath', default="predictions/supervised_bert_difflr_checkpoint_21000_ep_32")
-
     parser.add_argument('--num_splits', type=int, default=3)
     parser.add_argument('--emb_file', type=str, default='train_emb')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
