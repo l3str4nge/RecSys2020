@@ -2,10 +2,6 @@
 <a href="https://layer6.ai/"><img src="https://github.com/layer6ai-labs/DropoutNet/blob/master/logs/logobox.jpg" width="180"></a>
 </p>
 
-**Team members**: 
-
-Contact: 
-
 ## Approach
 
 Our model is based on a deep learning pipeline with three major sources of input: 1) extracted features that describe engaging user, tweet creator and tweet content 2) language model embeddings for tweet content 3) engagement/creation history embeddings for user and tweet creator. These inputs are combined with feed forward neural networks to generate 4-way predictions for each engagement type.
