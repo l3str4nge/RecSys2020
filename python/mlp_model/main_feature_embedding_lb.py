@@ -81,6 +81,7 @@ if __name__ == "__main__":
     parser.add_argument('-ut', dest='u_threshold', type=check_float_positive, default=0)
     parser.add_argument('-ct', dest='c_threshold', type=check_float_positive, default=0)
     parser.add_argument('-u', dest='is_unified', action='store_true')
+    parser.add_argument('-c', dest='corruption', type=check_float_positive, default=0.25)
     parser.add_argument('-e', dest='epoch', type=check_int_positive, default=1000)
     parser.add_argument('-b', dest='batch', type=check_int_positive, default=4096)
     parser.add_argument('-lr', dest='lr', type=check_float_positive, default=0.0001)
