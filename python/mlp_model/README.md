@@ -1,7 +1,7 @@
 # mlp_model
 Code for training and inference of mlp models
 
-1. Make sure data files are in the right place.
+1. Make sure data files are in the right place. Assuming that you already have ```TrainXGB.csv```, ```ValidXGB.csv```, ```Submit.csv```, ```Test.csv``` in appropriate locations. Embedding files for BERT-Base and XLM-Roberta-Large should also be available.
 2. Run the script
 ```bash
 bash run.sh
