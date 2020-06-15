@@ -1,7 +1,7 @@
-To train the MLP model on the supervised Bert embeddings, run the following:
+To **train** the MLP model on the supervised Bert embeddings, run the following:
 
-_main_feature_embedding_multiple.py_
+*main_feature_embedding_multiple.py*
 
-To infer the MLP model on the supervised Bert embeddings, run the following:
+To **infer** the MLP model on the supervised Bert embeddings, run the following:
 
-_main_feature_embedding_lb_multiple.py_
+*main_feature_embedding_lb_multiple.py*
