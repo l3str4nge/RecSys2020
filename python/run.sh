@@ -26,7 +26,7 @@ supervised_bert_model/mlp_on_embeddings/run.sh
 
 # History embedding model
 # Train the MLP model on XLM-R embeddings with history and then perform inference on the Valid, Submit and Test sets
-history_model/run_python_codes.sh
+history_model/run.sh
 
 # The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/(train)(val)(submit)(test)/modelname/(engagement).csv
 
