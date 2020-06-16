@@ -185,13 +185,14 @@ def apply(args, TEMPS=[1, 1, 1, 1]):
     print("Generating CSVs...")
     for i, engage in enumerate(["reply", "retweet", "comment", "like"]):
         final_csv[engage] = preds[:,i]
-        final_csv[['tweet_lb','user_lb',engage]].to_csv(join(args.submit_folder, "scaled", engage+'.csv'),index=False, header=False)
+        final_csv[['tweet_lb','user_lb',engage]].to_csv(join(args.output_folder, engage+'.csv'),index=False, header=False)
 
 
 if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="P")
 
+    parser.add_argument('--output_folder', type=str, default="../out/test/scaled")
     parser.add_argument('--submit_folder', type=str, default="../out/test")
     parser.add_argument('--validation_folder', type=str, default='../out/val')
     parser.add_argument('--label_file', type=str, default='Valid.sav')

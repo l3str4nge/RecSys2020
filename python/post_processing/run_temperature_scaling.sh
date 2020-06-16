@@ -1,0 +1,1 @@
+python temperature_scaling.py --submit_folder /data/recsys2020/DL_Ouputs/test/blended --output_folder /data/recsys2020/DL_Ouputs/test/blended_and_scaled
