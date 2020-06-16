@@ -13,7 +13,7 @@ scaler.sh
 # Make sure the output of scaler.sh is stored in python/data, there should be 4 files: Train.sav, Valid.sav, Submit.sav, Test.sav
 # Run split_data.sh to chunk Train.sav into 3 chunks (this is because with embeddings, the data is too large to fit into RAM)
 # Note: we trained on a 256GB RAM machine with 3 chunks. More chunks may reduce the performance.
-data_splitting/splitter.sh
+./mlp_model/data_splitting/splitter.sh
 
 
 # Train the multilayer perceptron (MLP) models and then perform inference on the Valid, Submit and Test sets
@@ -46,7 +46,9 @@ history_model/run_python_codes.sh
 # Please make sure all the predictions files are in .......blahblahblah/folder in the following format:
 # /blahblahblah
 
-#run blender
-blender/run.sh
+# run blender
+./post_processing/run_blender.sh
 
 
+# run temperature tuning (done only for 1 out of 2 submissions)
+./post_processing/run_temperature_scaling.sh
