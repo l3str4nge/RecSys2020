@@ -93,7 +93,7 @@ if __name__ == "__main__":
     parser.add_argument('-v', dest='valid', default='Test.sav')
     
     # embeddings
-    parser.add_argument('--emb_path', default="/data/recsys2020/DL_Data/embeddings/bert/")
+    parser.add_argument('--emb_path', default="/data/recsys2020/DL_Data/embeddings/bert/supervised/")
     parser.add_argument('--emb_file', type=str, default='test')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint', type=str, default="/data/recsys2020/DL_Checkpoints/supervised_bert_model/featurenet_supervised_difflr_new_split_32.ckpt")
 
     # saving path
-    parser.add_argument('-sp', dest='spath', default="/data/recsys2020/DL_Output/supervised_bert_model/")
+    parser.add_argument('-sp', dest='spath', default="/data/recsys2020/DL_Output/test/supervised_bert_model/")
 
     args = parser.parse_args()
 

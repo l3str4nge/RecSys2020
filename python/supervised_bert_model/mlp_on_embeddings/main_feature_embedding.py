@@ -144,7 +144,7 @@ def validate(epoch, valid_loader, model, writer, scores, args):
     if m_aupr == best:
         print("New best score!")
 
-    torch.save(model.state_dict(), "./checkpoint/featurenet_{}_".format(args.exp_name) + str(epoch) + ".ckpt")
+    torch.save(model.state_dict(), "{}featurenet_{}_".format(args.run_name, args.exp_name) + str(epoch) + ".ckpt")
 
     model.train()
 
@@ -152,23 +152,32 @@ def validate(epoch, valid_loader, model, writer, scores, args):
 
 
 if __name__ == "__main__":
+    
     # Commandline arguments
+    
     parser = argparse.ArgumentParser(description="P")
+    
     parser.add_argument('-e', dest='epoch', type=check_int_positive, default=1000)
     parser.add_argument('-b', dest='batch', type=check_int_positive, default=4096)
     parser.add_argument('-lr', dest='lr', type=check_float_positive, default=1e-4)
     parser.add_argument('-l', dest='lamb', type=check_float_positive, default=0)
     parser.add_argument('-c', dest='corruption', type=check_float_positive, default=0.25)
-    parser.add_argument('-d', dest='path', default="/home/layer6/recsys/kevin_data")
-    parser.add_argument('-ed', dest='emb_path', default="/home/layer6/recsys/kevin_data/embeddings/supervised_bert_difflr_checkpoint_21000/")
+    
+    # feeatures
+    parser.add_argument('-d', dest='path', default="/data/recsys2020/DL_Data/")
+    parser.add_argument('--num_splits', type=int, default=3)
     parser.add_argument('-tr', dest='train', default='Train')
     parser.add_argument('-v', dest='valid', default='Valid.sav')
-
-    parser.add_argument('--num_splits', type=int, default=3)
+    
+    # embeddings
+    parser.add_argument('-ed', dest='emb_path', default="/data/recsys2020/DL_Data/embeddings/bert/supervised/")
     parser.add_argument('--emb_file', type=str, default='train_emb')
-    parser.add_argument('--run_name', type=str, default='test')
-    parser.add_argument('--exp_name', type=str, default='supervised')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
+  
+    # run
+    parser.add_argument('--run_name', type=str, default="/data/recsys2020/DL_Checkpoints/supervised_bert_model/")
+    parser.add_argument('--exp_name', type=str, default='supervised')
+   
     args = parser.parse_args()
 
     main(args)
