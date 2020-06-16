@@ -21,22 +21,24 @@ mlp_model/run.sh
 # Train the MLP model on supervised fine-tuned embeddings and then perform inference on the Valid, Submit and Test sets
 supervised_bert_model/mlp_on_embeddings/run.sh
 
-# The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/train(val)/modelname/engagements.csv
+# The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/(train)(val)(submit)(test)/modelname/(engagement).csv
 
 
 # History embedding model
 # Train the MLP model on XLM-R embeddings with history and then perform inference on the Valid, Submit and Test sets
 history_model/run_python_codes.sh
 
-# The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/train(val)/modelname/engagements.csv
+# The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/(train)(val)(submit)(test)/modelname/(engagement).csv
 
 # Finally the prediction scores are blended
 # Please make sure all the predictions files are in /data/recsys2020/DL_Ouputs in the following format:
-# /blahblahblah
+# (train)(val)(submit)(test)/modelname/(engagement).csv
 
 # run blender
 ./post_processing/run_blender.sh
+# this should output the predictions from the blended model to /data/recsys2020/DL_Ouputs/test/blended
 
 
 # run temperature tuning (done only for 1 out of 2 submissions)
 ./post_processing/run_temperature_scaling.sh
+# this should output the scaled predictions to /data/recsys2020/DL_Ouputs/test/blended_and_scaled
