@@ -19,7 +19,7 @@ mlp_model/run.sh
 
 # Supervised Bert fine-tuning
 # Train the MLP model on supervised fine-tuned embeddings and then perform inference on the Valid, Submit and Test sets
-supervised_bert_model/some_shellscript.sh
+supervised_bert_model/mlp_on_embeddings/run.sh
 
 # The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/train(val)/modelname/engagements.csv
 
