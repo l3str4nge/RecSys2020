@@ -31,7 +31,7 @@ mlp_model/run.sh
 cp mlp_models/checkpoints/some_checkpoints supervised_bert_model/somewhere
 
 # Train the MLP model on supervised fine-tuned embeddings and then perform inference on the Valid, Submit and Test sets
-supervised_bert_model/some_shellscript.sh
+supervised_bert_model/mlp_on_embeddings/run.sh
 
 # The 4 csv output/submission files are saved under python/out/train(val)/modelname/engagements.csv
 
