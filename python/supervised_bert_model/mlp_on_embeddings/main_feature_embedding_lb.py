@@ -90,7 +90,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_splits', type=int, default=3)
     parser.add_argument('--emb_file', type=str, default='train_emb')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
-    parser.add_argument('--checkpoint', type=str, default="./checkpoint/featurenet_supervised_32.ckpt")
+    parser.add_argument('--checkpoint', type=str, default="featurenet_supervised_difflr_new_split_32.ckpt")
 
     args = parser.parse_args()
 
