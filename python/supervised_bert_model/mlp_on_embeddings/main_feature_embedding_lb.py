@@ -71,8 +71,11 @@ def main(args):
 
 
 if __name__ == "__main__":
+    
     # Commandline arguments
+    
     parser = argparse.ArgumentParser(description="P")
+    
     parser.add_argument('-ut', dest='u_threshold', type=check_float_positive, default=0)
     parser.add_argument('-ct', dest='c_threshold', type=check_float_positive, default=0)
     parser.add_argument('-u', dest='is_unified', action='store_true')
@@ -82,15 +85,23 @@ if __name__ == "__main__":
     parser.add_argument('-l', dest='lamb', type=check_float_positive, default=100)
     parser.add_argument('-r', dest='rank', type=check_int_positive, default=20)
     parser.add_argument('-s', dest='seed', type=check_int_positive, default=1)
-    parser.add_argument('-d', dest='path', default="/home/layer6/recsys/kevin_data/")
-    parser.add_argument('--emb_path', default="/home/layer6/recsys/kevin_data/embeddings/supervised_bert_difflr_checkpoint_21000")
-    parser.add_argument('-tr', dest='train', default='Train')
-    parser.add_argument('-v', dest='valid', default='Submit.sav')
-    parser.add_argument('-sp', dest='spath', default="predictions/supervised_bert_difflr_checkpoint_21000_ep_32")
+    
+    # features
+    parser.add_argument('-d', dest='path', default="/data/recsys2020/DL_Data/")
     parser.add_argument('--num_splits', type=int, default=3)
-    parser.add_argument('--emb_file', type=str, default='train_emb')
+    parser.add_argument('-tr', dest='train', default='Train')
+    parser.add_argument('-v', dest='valid', default='Test.sav')
+    
+    # embeddings
+    parser.add_argument('--emb_path', default="/data/recsys2020/DL_Data/embeddings/bert/")
+    parser.add_argument('--emb_file', type=str, default='test')
     parser.add_argument('--emb_type', type=check_emb_type, required=True)
-    parser.add_argument('--checkpoint', type=str, default="featurenet_supervised_difflr_new_split_32.ckpt")
+
+    # model
+    parser.add_argument('--checkpoint', type=str, default="/data/recsys2020/DL_Checkpoints/supervised_bert_model/featurenet_supervised_difflr_new_split_32.ckpt")
+
+    # saving path
+    parser.add_argument('-sp', dest='spath', default="/data/recsys2020/DL_Output/supervised_bert_model/")
 
     args = parser.parse_args()
 
