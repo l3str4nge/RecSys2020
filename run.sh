@@ -47,7 +47,11 @@ mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="submit
 mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelMLP" -Dexec.args="test ${PROJECT_PATH}"
 
 #extract libsvm feature file for DL (history) pipeline
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="train ${PROJECT_PATH}"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="valid ${PROJECT_PATH}"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="submit ${PROJECT_PATH}"
-mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="test ${PROJECT_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="train ${DL_H_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="valid ${DL_H_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="submit ${DL_H_PATH}"
+mvn exec:java -Dexec.mainClass="recsys2020.RecSys20ModelHistory" -Dexec.args="test ${DL_H_PATH}"
+
+# run the python pipeline
+cd python
+run.sh

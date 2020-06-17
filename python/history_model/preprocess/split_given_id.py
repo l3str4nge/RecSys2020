@@ -8,7 +8,7 @@ from tqdm import tqdm
 from pandas.core.common import flatten
 
 ## ----------------- Load Embedding Files -----------------
-emb_dir = "/home/layer6/joey/recsys/chunks/xlmr/trainval/*.p"
+emb_dir = "/data/recsys2020/chunks/xlmr/trainval/*.p"
 emb_chunk_files = glob.glob(emb_dir)
 
 for i, file in enumerate(tqdm(emb_chunk_files)):
@@ -19,14 +19,14 @@ for i, file in enumerate(tqdm(emb_chunk_files)):
         embedding.update(pickle.load(open(file, "rb")))
 
 ## ----------------- Load Submit Embedding Files -----------------
-emb_dir = "/home/layer6/joey/recsys/chunks/xlmr/submit/*.p"
+emb_dir = "/data/recsys2020//chunks/xlmr/submit/*.p"
 emb_chunk_files = glob.glob(emb_dir)
 for i, file in enumerate(tqdm(emb_chunk_files)):
     embedding.update(pickle.load(open(file, "rb")))
 ## ----------------- Load Submit Embedding Files -----------------
 
 ## ----------------- Load Test Embedding Files -----------------
-emb_dir = "/home/layer6/joey/recsys/chunks/xlmr/test/*.p"
+emb_dir = "/data/recsys2020/chunks/xlmr/test/*.p"
 emb_chunk_files = glob.glob(emb_dir)
 for i, file in enumerate(tqdm(emb_chunk_files)):
     embedding.update(pickle.load(open(file, "rb")))
@@ -39,7 +39,7 @@ gc.collect()
 ## ----------------- Load Embedding Files -----------------
 
 ## ----------------- Get Training Embeddings -----------------
-train_emb_dir_list = "/home/layer6/joey/recsys/history_nn/TrainEmbID*"
+train_emb_dir_list = "/data/recsys2020/history_nn/TrainEmbID*"
 train_emb_dirs = list(sorted(glob.glob(train_emb_dir_list)))
 
 for i, file in enumerate(tqdm(train_emb_dirs)):
@@ -52,7 +52,7 @@ for i, file in enumerate(tqdm(train_emb_dirs)):
     embs_chunk = np.array([embedding[k] for k in chunk])
     print(embs_chunk.shape)
 
-    with open("/home/layer6/joey/recsys/history_nn/TrainEmb" + str(i) + ".sav", "wb") as f1:
+    with open("/data/recsys2020/history_nn/TrainEmb" + str(i) + ".sav", "wb") as f1:
         joblib.dump(embs_chunk, f1)
     del embs_chunk
     gc.collect()
@@ -62,14 +62,14 @@ for i, file in enumerate(tqdm(train_emb_dirs)):
 ## -----------------  Get Training Embeddings -----------------
 
 ## ----------------- Get Valid Embeddings -----------------
-with open("/home/layer6/joey/recsys/history_nn/ValidEmbID", 'rb') as f:
+with open("/data/recsys2020/history_nn/ValidEmbID", 'rb') as f:
     chunk = joblib.load(f)
 print(len(chunk))
 
 embs_chunk = np.array([embedding[k] for k in chunk])
 print(embs_chunk.shape)
 
-with open("/home/layer6/joey/recsys/history_nn/ValidEmb.sav", "wb") as f1:
+with open("/data/recsys2020/history_nn/ValidEmb.sav", "wb") as f1:
     joblib.dump(embs_chunk, f1)
 
 del embs_chunk
@@ -78,14 +78,14 @@ gc.collect()
 ## ----------------- Get Valid Embeddings -----------------
 
 ## ----------------- Get Submit Embeddings -----------------
-with open("/home/layer6/joey/recsys/history_nn/SubmitEmbID", 'rb') as f:
+with open("/data/recsys2020/history_nn/SubmitEmbID", 'rb') as f:
     chunk = joblib.load(f)
 print(len(chunk))
 
 embs_chunk = np.array([embedding[k] for k in chunk])
 print(embs_chunk.shape)
 
-with open("/home/layer6/joey/recsys/history_nn/SubmitEmb.sav", "wb") as f1:
+with open("/data/recsys2020/history_nn/SubmitEmb.sav", "wb") as f1:
     joblib.dump(embs_chunk, f1)
 
 del embs_chunk
@@ -94,14 +94,14 @@ gc.collect()
 ## ----------------- Get Submit Embeddings -----------------
 
 # ----------------- Get Test Embeddings -----------------
-with open("/home/layer6/joey/recsys/history_nn/TestEmbID", 'rb') as f:
+with open("/data/recsys2020/history_nn/TestEmbID", 'rb') as f:
     chunk = joblib.load(f)
 print(len(chunk))
 
 embs_chunk = np.array([embedding[k] for k in chunk])
 print(embs_chunk.shape)
 
-with open("/home/layer6/joey/recsys/history_nn/TestEmb.sav", "wb") as f1:
+with open("/data/recsys2020/history_nn/TestEmb.sav", "wb") as f1:
     joblib.dump(embs_chunk, f1)
 
 del embs_chunk

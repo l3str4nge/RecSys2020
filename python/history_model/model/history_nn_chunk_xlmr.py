@@ -41,7 +41,7 @@ def compute_rce(pred, gt):
     strawman_cross_entropy = log_loss(gt, [data_ctr for _ in range(len(gt))])
     return (1.0 - cross_entropy/strawman_cross_entropy) * 100.0
 
-id_map_csv = pd.read_csv('/home/layer6/joey/recsys/history_nn/TweetIDMap.csv', header=None)
+id_map_csv = pd.read_csv('/data/recsys2020/history_nn/TweetIDMap.csv', header=None)
 id_map = dict(zip(id_map_csv.iloc[:, 1], id_map_csv.iloc[:, 0]))
 
 del id_map_csv
@@ -557,7 +557,8 @@ def evaluate(args, valid_dataset, model):
         results["rce_{}".format(action)] = compute_rce(pi, gti)
 
         tmp_df = pd.DataFrame({'tid':tids, 'uid':uids, 'pred':list(pi)})
-        file_name = os.path.join(args.blend_dir, action + str(args.step) + "valid" + ".csv")
+        # file_name = os.path.join(args.blend_dir, action + str(args.step) + "valid" + ".csv")
+        file_name = os.path.join(args.blend_dir + "/valid/", action + ".csv")
         tmp_df.to_csv(file_name, index=False, header=False)
 
     return results
@@ -600,9 +601,11 @@ def submit(args, submit_dataset, model, submit=True):
         tmp_pred = list(all_preds[:, i])
         tmp_df = pd.DataFrame({'tid':tids, 'uid':uids, 'pred': tmp_pred})
         if submit:
-            file_name = os.path.join(args.submit_dir, action + str(args.step) +"submit" + ".csv")
+            # file_name = os.path.join(args.submit_dir, action + str(args.step) +"submit" + ".csv")
+            file_name = os.path.join(args.submit_dir + "/submit/", action + ".csv")
         else:
-            file_name = os.path.join(args.submit_dir, action + str(args.step) +"test" + ".csv")
+            # file_name = os.path.join(args.submit_dir, action + str(args.step) +"test" + ".csv")
+            file_name = os.path.join(args.submit_dir + "/test/", action + ".csv")
         tmp_df.to_csv(file_name, index=False, header=False)
 
 
@@ -611,52 +614,52 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--train_feature_dict_dir",
-                        default="/home/layer6/joey/recsys/history_nn/TrainChunk*",
+                        default="/data/recsys2020/history_nn/TrainChunk*",
                         type=str)
     parser.add_argument("--valid_feature_dict_dir",
-                        default="/home/layer6/joey/recsys/history_nn/Valid.sav",
+                        default="/data/recsys2020/history_nn/Valid.sav",
                         type=str)
     parser.add_argument("--submit_feature_dict_dir",
-                        default="/home/layer6/joey/recsys/history_nn/Submit.sav",
+                        default="/data/recsys2020/history_nn/Submit.sav",
                         type=str)
     parser.add_argument("--test_feature_dict_dir",
-                        default="/home/layer6/joey/recsys/history_nn/Test.sav",
+                        default="/data/recsys2020/history_nn/Test.sav",
                         type=str)
     parser.add_argument("--output_dir",
-                        default="/home/layer6/joey/recsys/output/",
+                        default="/data/recsys2020/output/",
                         type=str)
     parser.add_argument("--emb_dir",
-                        default="/home/layer6/joey/recsys/history_nn/TrainEmb*.sav",
+                        default="/data/recsys2020/history_nn/TrainEmb*.sav",
                         type=str)
     parser.add_argument("--emb_id_dir",
-                        default="/home/layer6/joey/recsys/history_nn/TrainEmbID*",
+                        default="/data/recsys2020/history_nn/TrainEmbID*",
                         type=str)
     parser.add_argument("--valid_emb_dir",
-                        default="/home/layer6/joey/recsys/history_nn/ValidEmb.sav",
+                        default="/data/recsys2020/history_nn/ValidEmb.sav",
                         type=str)
     parser.add_argument("--valid_emb_id_dir",
-                        default="/home/layer6/joey/recsys/history_nn/ValidEmbID",
+                        default="/data/recsys2020/history_nn/ValidEmbID",
                         type=str)
     parser.add_argument("--submit_emb_dir",
-                        default="/home/layer6/joey/recsys/history_nn/SubmitEmb.sav",
+                        default="/data/recsys2020/history_nn/SubmitEmb.sav",
                         type=str)
     parser.add_argument("--submit_emb_id_dir",
-                        default="/home/layer6/joey/recsys/history_nn/SubmitEmbID",
+                        default="/data/recsys2020/history_nn/SubmitEmbID",
                         type=str)
     parser.add_argument("--test_emb_dir",
-                        default="/home/layer6/joey/recsys/history_nn/TestEmb.sav",
+                        default="/data/recsys2020/history_nn/TestEmb.sav",
                         type=str)
     parser.add_argument("--test_emb_id_dir",
-                        default="/home/layer6/joey/recsys/history_nn/TestEmbID",
+                        default="/data/recsys2020/history_nn/TestEmbID",
                         type=str)
     parser.add_argument("--model_dir",
-                        default="/home/layer6/joey/recsys/output/",
+                        default="/data/recsys2020/output/",
                         type=str)
     parser.add_argument("--submit_dir",
-                        default="/home/layer6/joey/recsys/submit/",
+                        default="/data/recsys2020/DL_Ouputs/",
                         type=str)
     parser.add_argument("--blend_dir",
-                        default="/home/layer6/joey/recsys/blend/",
+                        default="/data/recsys2020/DL_Ouputs/",
                         type=str)
 
     parser.add_argument("--train_batch_size", default=4000, type=int)

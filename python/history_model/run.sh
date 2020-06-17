@@ -10,6 +10,6 @@ python preprocess/split_dataset.py
 
 python preprocess/split_given_id.py
 
-run history_nn_chunk_xlmr.py with train option to train the model and then with valid/submit/test to generate validation scores, submission files and test files
+# run history_nn_chunk_xlmr.py with train option to train the model and then with valid/submit/test to generate validation scores, submission files and test files
 
 python model/history_nn_chunk_xlmr.py

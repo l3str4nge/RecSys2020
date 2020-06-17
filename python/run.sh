@@ -3,9 +3,8 @@
 PATH=`pwd`
 
 # Download the following files from S3:
-# 1. XLM-Roberta and Bert embeddings, placing them in /data/recsys2020/DL_Data/embeddings/xlm-r and /data/recsys2020/DL_Data//embeddings/bert respectively
-# 2. Train.sav, Valid.sav, Submit.sav, Test.sav, placing them in /data/recsys2020/DL_Data/data
-# 3. model checkpoints, placing them in /data/recsys2020/DL_Checkpoints
+# 1. XLM-Roberta and Bert models weights, and inference embeddings into /data/recsys2020/DL_Data/embeddings/xlm-r and /data/recsys2020/DL_Data//embeddings/bert respectively
+# 2. model checkpoints, placing them in /data/recsys2020/DL_Checkpoints
 
 # Train the multilayer perceptron (MLP) models and then perform inference on the Valid, Submit and Test sets
 # The 4 csv output/submission files are saved under python/out/train(val)/modelname/engagements.csv
@@ -28,7 +27,7 @@ cd $PATH
 # The 4 csv output/submission files are saved under /data/recsys2020/DL_Ouputs/(train)(val)(submit)(test)/modelname/(engagement).csv
 
 
-# History embedding model
+# History embedding model (Tested on a box with 600GB RAM)
 # Train the MLP model on XLM-R embeddings with history and then perform inference on the Valid, Submit and Test sets
 cd $PATH"/history_model"
 run.sh

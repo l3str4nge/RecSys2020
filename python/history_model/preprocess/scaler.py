@@ -100,7 +100,7 @@ def generate_dict_np(path):
     return ret
 
 ##############################Train########################################
-train_path = "/home/layer6/joey/recsys/history_nn/TrainXGB.csv"
+train_path = "/data/recsys2020/history_nn/TrainXGB.csv"
 train_dict = generate_dict_np(train_path)
 
 ##Fit scalers
@@ -111,12 +111,12 @@ scaler_f.fit(train_dict['features'][np.random.choice(s, int(0.1 * s))].astype(np
 print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 print("fit feature scaler")
 ##Save scalers
-with open('/home/layer6/joey/recsys/history_nn/f_scaler.pkl', 'wb') as f:
+with open('/data/recsys2020/history_nn/f_scaler.pkl', 'wb') as f:
     pickle.dump(scaler_f, f, protocol=4)
 ##Fit scalers
 
 ## Load scalers
-# with open('/home/layer6/joey/recsys/history_nn/f_scaler.pkl', 'rb') as f:
+# with open('/data/recsys2020/history_nn/f_scaler.pkl', 'rb') as f:
 #    scaler_f = pickle.load(f)
 ## Load scalers
 
@@ -143,17 +143,17 @@ train_dict['engagement_histories'] = engagement_histories
 print("finish feature transformation")
 print("Elapsed: {0}".format(inhour(time.time() - start_time)))
 
-with open('/home/layer6/joey/recsys/history_nn/Train.sav', 'wb') as f:
+with open('/data/recsys2020/history_nn/Train.sav', 'wb') as f:
     joblib.dump(train_dict, f)
 del (train_dict)
 print("saved!")
 ##############################Train########################################
 
 ##############################Valid########################################
-valid_path = "/home/layer6/joey/recsys/history_nn/Valid.csv"
+valid_path = "/data/recsys2020/history_nn/Valid.csv"
 
 ## Load scalers
-with open('/home/layer6/joey/recsys/history_nn/f_scaler.pkl', 'rb') as f:
+with open('/data/recsys2020/history_nn/f_scaler.pkl', 'rb') as f:
    scaler_f = pickle.load(f)
 ## Load scalers
 
@@ -179,7 +179,7 @@ for i, row in enumerate(valid_dict['engagement_histories']):
             engagement_histories[i, starting_index: starting_index + l] = temp[:l]
 valid_dict['engagement_histories'] = engagement_histories
 
-with open('/home/layer6/joey/recsys/history_nn/Valid.sav', 'wb') as f:
+with open('/data/recsys2020/history_nn/Valid.sav', 'wb') as f:
     joblib.dump(valid_dict, f)
 del (valid_dict)
 print("saved!")
@@ -213,10 +213,10 @@ def generate_lb_dict(path):
     return dic
 
 
-lb_path = "/home/layer6/joey/recsys/history_nn/Submit.csv"
+lb_path = "/data/recsys2020/history_nn/Submit.csv"
 lb_dict = generate_lb_dict(lb_path)
 
-with open('/home/layer6/joey/recsys/history_nn/f_scaler.pkl', 'rb') as f:
+with open('/data/recsys2020/history_nn/f_scaler.pkl', 'rb') as f:
    scaler_f = pickle.load(f)
 
 start_time = time.time()
@@ -238,7 +238,7 @@ for i, row in enumerate(lb_dict['engagement_histories']):
             engagement_histories[i, starting_index: starting_index + l] = temp[:l]
 lb_dict['engagement_histories'] = engagement_histories
 
-with open('/home/layer6/joey/recsys/history_nn/Submit.sav', 'wb') as f:
+with open('/data/recsys2020/history_nn/Submit.sav', 'wb') as f:
     joblib.dump(lb_dict, f)
 print("saved!")
 ##############################Submit########################################
@@ -271,10 +271,10 @@ def generate_test_dict(path):
     return dic
 
 
-test_path = "/home/layer6/joey/recsys/history_nn/Test.csv"
+test_path = "/data/recsys2020/history_nn/Test.csv"
 test_dict = generate_test_dict(test_path)
 
-with open('/home/layer6/joey/recsys/history_nn/f_scaler.pkl', 'rb') as f:
+with open('/data/recsys2020/history_nn/f_scaler.pkl', 'rb') as f:
    scaler_f = pickle.load(f)
 
 start_time = time.time()
@@ -296,7 +296,7 @@ for i, row in enumerate(test_dict['engagement_histories']):
             engagement_histories[i, starting_index: starting_index + l] = temp[:l]
 test_dict['engagement_histories'] = engagement_histories
 
-with open('/home/layer6/joey/recsys/history_nn/Test.sav', 'wb') as f:
+with open('/data/recsys2020/history_nn/Test.sav', 'wb') as f:
     joblib.dump(test_dict, f)
 print("saved!")
 ##############################Test########################################
