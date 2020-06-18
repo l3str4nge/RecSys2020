@@ -46,4 +46,4 @@ run_blender.sh
 # run temperature tuning (done only for 1 out of 2 submissions)
 run_temperature_scaling.sh
 # this should output the scaled predictions to $DL_DATA_PATH/DL_Ouputs/test/blended_and_scaled
-cd $PATH
+cd $DLPATH
