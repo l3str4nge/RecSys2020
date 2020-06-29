@@ -5,7 +5,7 @@ import numpy as np
 
 emb_size = 768
 mode = "test" # "submit" or "test"
-source-embeddings_file = "/home/layer6/recsys/clean/embeddings/supervised_mean_emb_{}.p".format(mode)
+source_embeddings_file = "/home/layer6/recsys/clean/embeddings/supervised_mean_emb_{}.p".format(mode)
 tid_to_row_file = "new_split/tweet_id_to_row_{}.p".format(mode)
 
 
